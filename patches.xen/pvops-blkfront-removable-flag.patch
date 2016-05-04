@@ -1,26 +1,23 @@
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 4e86393..34493d7 100644
 --- a/drivers/block/xen-blkfront.c
 +++ b/drivers/block/xen-blkfront.c
-@@ -1188,7 +1188,7 @@ static void blkfront_connect(struct blkfront_info *info)
+@@ -2371,6 +2371,7 @@
  	unsigned int physical_sector_size;
  	unsigned int binfo;
- 	int err;
--	int barrier, flush, discard, persistent;
-+	int barrier, flush, discard, persistent, removable;
+ 	int err, i;
++	int removable;
  
  	switch (info->connected) {
  	case BLKIF_STATE_CONNECTED:
-@@ -1266,6 +1266,12 @@ static void blkfront_connect(struct blkfront_info *info)
- 	if (!err && discard)
- 		blkfront_setup_discard(info);
+@@ -2417,6 +2418,12 @@
+ 		return;
+ 	}
  
-+	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
++ 	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
 +			    "removable", "%d", &removable,
 +			    NULL);
 +	if (!err && removable)
 +		binfo |= VDISK_REMOVABLE;
 +
- 	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
-			    "feature-persistent", "%u", &persistent,
- 			    NULL);
+ 	/*
+ 	 * physcial-sector-size is a newer field, so old backends may not
+ 	 * provide this. Assume physical sector size to be the same as
