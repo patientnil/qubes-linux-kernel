@@ -27,7 +27,7 @@ index 959e479..94309e6 100644
 @@ -379,6 +379,7 @@ static void xennet_tx_buf_gc(struct netfront_queue *queue)
  				continue;
  
- 			id  = txrsp.id;
+ 			id  = txrsp->id;
 +			BUG_ON(id >= NET_TX_RING_SIZE);
  			skb = queue->tx_skbs[id].skb;
  			if (unlikely(gnttab_query_foreign_access(
